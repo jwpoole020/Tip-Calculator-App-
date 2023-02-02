@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     TextView totalPrice;
     double tip=.15;
     double total;
+    double value=0.0;
+    double people=1.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    double value = Double.parseDouble(purchasePrice.getText().toString());
+                    value = Double.parseDouble(purchasePrice.getText().toString());
                     if (radioEntire.isChecked()) {
                         total = value + (value * tip);
 
                     } else if (radioSplit.isChecked()) {
-                        double people = Double.parseDouble(numPeople.getText().toString());
+                        people = Double.parseDouble(numPeople.getText().toString());
                         total = (value + (value * tip)) / people;
 
                     }
@@ -80,18 +82,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    double value = Double.parseDouble(purchasePrice.getText().toString());
+                    value = Double.parseDouble(purchasePrice.getText().toString());
                     if (radioEntire.isChecked()) {
                         total = value + (value * tip);
 
                     } else if (radioSplit.isChecked()) {
-                        double people = Double.parseDouble(numPeople.getText().toString());
+                        people = Double.parseDouble(numPeople.getText().toString());
                         total = (value + (value * tip)) / people;
 
                     }
                     totalPrice.setText("$" + String.format("%.2f", total));
                 }
                 return false;
+            }
+        });
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                value = Double.parseDouble(purchasePrice.getText().toString());
+                if(i==R.id.radioEntire) {
+                    people = 1.0;
+                    total = (value + (value * tip)) / people;
+                    totalPrice.setText("$" + String.format("%.2f", total));
+                }
             }
         });
     }
