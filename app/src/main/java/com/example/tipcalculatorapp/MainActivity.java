@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioSplit;
     TextView tipText;
     TextView totalPrice;
+    TextView tipCost;
+
     double tip=.15;
     double total;
     double value=0.0;
@@ -39,13 +41,13 @@ public class MainActivity extends AppCompatActivity {
         radioSplit = findViewById(R.id.radioSplit);
         tipText = findViewById(R.id.tipText);
         totalPrice = findViewById(R.id.totalPrice);
+        tipCost = findViewById(R.id.tipCost);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tipText.setText("%"+i);
-                tip=i;
-                tip=tip/100;
+                tipText.setText(i+"%");
+                tip=i/100;
             }
 
             @Override
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     totalPrice.setText("$" + String.format("%.2f", total));
+                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
                 }
 
                 return false;
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     totalPrice.setText("$" + String.format("%.2f", total));
+                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
                 }
                 return false;
             }
@@ -105,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
                     people = 1.0;
                     total = (value + (value * tip)) / people;
                     totalPrice.setText("$" + String.format("%.2f", total));
+                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
+                } else if(i==R.id.radioSplit){
+                    numPeople.setText("");
                 }
             }
         });
