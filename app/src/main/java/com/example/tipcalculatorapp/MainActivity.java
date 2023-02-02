@@ -47,7 +47,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 tipText.setText(i+"%");
-                tip=i/100;
+                tip=i;
+                tip=tip/100;
+                total = (value + (value * tip)) / people;
+                totalPrice.setText("$" + String.format("%.2f", total));
+                tipCost.setText("$"+String.format("%.2f", (value*tip)));
             }
 
             @Override
