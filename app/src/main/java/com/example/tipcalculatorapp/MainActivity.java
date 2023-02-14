@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tipCost;
     TextView tipPer;
     Button button;
+    SeekBar seekBar;
+    TextView tipText;
 
     double tip=.15;
     double total;
@@ -37,7 +39,28 @@ public class MainActivity extends AppCompatActivity {
         tipCost = findViewById(R.id.tipCost);
         tipPer = findViewById(R.id.tipPer);
         button = findViewById(R.id.button);
+        seekBar = findViewById(R.id.seekBar);
+        tipText = findViewById(R.id.tipText);
 
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                tipText.setText(i+"%");
+                tip=i;
+                tip=tip/100;
+                total = (value + (value * tip)) / people;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

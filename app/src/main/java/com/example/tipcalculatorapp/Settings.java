@@ -13,9 +13,8 @@ import android.widget.TextView;
 
 public class Settings extends AppCompatActivity {
 
-    TextView tipText;
+
     EditText numPeople;
-    SeekBar seekBar;
     RadioGroup radioGroup;
     RadioButton radioEntire;
     RadioButton radioSplit;
@@ -30,32 +29,13 @@ public class Settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        tipText = findViewById(R.id.tipText);
+
         numPeople = findViewById(R.id.numPeople);
-        seekBar = findViewById(R.id.seekBar);
         radioGroup = findViewById(R.id.radioGroup);
         radioEntire = findViewById(R.id.radioEntire);
         radioSplit = findViewById(R.id.radioSplit);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tipText.setText(i+"%");
-                tip=i;
-                tip=tip/100;
-                total = (value + (value * tip)) / people;
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         numPeople.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
