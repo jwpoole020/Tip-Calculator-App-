@@ -3,6 +3,7 @@ package com.example.tipcalculatorapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,10 +29,11 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioSplit;
     EditText numPeople;
 
-    double tip=.15;
-    double total=0.0;
-    double value=0.0;
-    double people=1.0;
+    private double tip=.15;
+    private double total=0.0;
+    private double value=0.0;
+    private double people=1.0;
+    private boolean split = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tipText.setText(i+"%");
+                tipText.setText(tip+"%");
                 tip=i;
                 tip=tip/100;
                 total = (value + (value * tip)) / people;
@@ -67,7 +69,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
+            }public void updateSettings(){
+            SharedPreferences sp = getSharedPreferences("shared", MODE_PRIVATE);
+            tip = sp.getInt("tip",15);
+            people = sp.getInt("people", 1);
+
+        }
         });
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -84,11 +91,9 @@ public class MainActivity extends AppCompatActivity {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     value = Double.parseDouble(purchasePrice.getText().toString());
                     total = (value + (value * tip)) / people;
-                    tipPer.setText((tip*100)+"%");
-                    totalPrice.setText("$" + String.format("%.2f", total));
-                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
-                }
-
+                    tipPer.setText(String.format("%.2f",(tip*100))+"%");
+                    totalPrice.setText("$" + String.format("%.0f", total));
+                    tipCost.setText("$"+String.format("%.2f", (value*tip)));}
                 return false;
             }
         });
@@ -121,7 +126,32 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+    public void calculate(){
+        if (split==false){
+            radioEntire.setChecked(true);
+        } else{
+            radioSplit.setChecked(true);
+        }
+        value = Double.parseDouble(purchasePrice.getText().toString());
+        total = (value + (value * tip)) / people;
+        tipPer.setText(String.format("%.2f",(tip*100))+"%");
+        totalPrice.setText("$" + String.format("%.0f", total));
+        tipCost.setText("$"+String.format("%.2f", (value*tip)));
+    }
+    public void updateSettings(){
+        SharedPreferences sp = getSharedPreferences("shared", MODE_PRIVATE);
+        tip = sp.getInt("tip",15);
+        people = sp.getInt("people", 1);
+        split = sp.getBoolean("split", false);
+        seekBar.setProgress(tip);
+        calculate();
 
 
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        updateSettings();
     }
 }
