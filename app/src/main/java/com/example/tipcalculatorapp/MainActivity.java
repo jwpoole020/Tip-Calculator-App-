@@ -23,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     SeekBar seekBar;
     TextView tipText;
+    RadioGroup radioGroup;
+    RadioButton radioEntire;
+    RadioButton radioSplit;
+    EditText numPeople;
 
     double tip=.15;
-    double total;
+    double total=0.0;
     double value=0.0;
     double people=1.0;
 
@@ -41,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         seekBar = findViewById(R.id.seekBar);
         tipText = findViewById(R.id.tipText);
+        radioGroup = findViewById(R.id.radioGroup);
+        radioEntire = findViewById(R.id.radioEntire);
+        radioSplit = findViewById(R.id.radioSplit);
+        numPeople = findViewById(R.id.numPeople);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -81,6 +89,35 @@ public class MainActivity extends AppCompatActivity {
                     tipCost.setText("$"+String.format("%.2f", (value*tip)));
                 }
 
+                return false;
+            }
+        });
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                value = Double.parseDouble(purchasePrice.getText().toString());
+                if(i==R.id.radioEntire) {
+                    people = 1.0;
+                    total = (value + (value * tip)) / people;
+                    totalPrice.setText("$" + String.format("%.2f", total));
+                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
+                } else if(i==R.id.radioSplit){
+                    numPeople.setText("");
+                }
+            }
+        });
+
+        numPeople.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    if (radioEntire.isChecked()) {
+                        people = 1.0;
+                    } else if (radioSplit.isChecked()) {
+                        people = Double.parseDouble(numPeople.getText().toString());
+                    }
+                }
                 return false;
             }
         });
