@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     EditText numPeople;
 
     private double tip=.15;
+    private int tipI=15;
     private double total=0.0;
     private double value=0.0;
     private double people=1.0;
@@ -55,10 +56,14 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tipText.setText(tip+"%");
-                tip=i;
-                tip=tip/100;
+                tipI=i;
+                tipText.setText(tipI+"%");
+                tip=tipI;
+                tip=tip/100.0;
                 total = (value + (value * tip)) / people;
+                tipPer.setText(tipI+"%");
+                total = (value + (value * tip)) / people;
+                totalPrice.setText("$" + String.format("%.0f", total));
             }
 
             @Override
@@ -69,12 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }public void updateSettings(){
-            SharedPreferences sp = getSharedPreferences("shared", MODE_PRIVATE);
-            tip = sp.getInt("tip",15);
-            people = sp.getInt("people", 1);
-
-        }
+            }
         });
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     value = Double.parseDouble(purchasePrice.getText().toString());
                     total = (value + (value * tip)) / people;
-                    tipPer.setText(String.format("%.2f",(tip*100))+"%");
+                    tipPer.setText(tipI+"%");
                     totalPrice.setText("$" + String.format("%.0f", total));
                     tipCost.setText("$"+String.format("%.2f", (value*tip)));}
                 return false;
@@ -101,15 +101,20 @@ public class MainActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                value = Double.parseDouble(purchasePrice.getText().toString());
-                if(i==R.id.radioEntire) {
-                    people = 1.0;
-                    total = (value + (value * tip)) / people;
-                    totalPrice.setText("$" + String.format("%.2f", total));
-                    tipCost.setText("$"+String.format("%.2f", (value*tip)));
-                } else if(i==R.id.radioSplit){
-                    numPeople.setText("");
-                }
+                try {
+                    value = Double.parseDouble(purchasePrice.getText().toString());
+                    if (i == R.id.radioEntire) {
+                        people = 1.0;
+                        total = (value + (value * tip)) / people;
+                        totalPrice.setText("$" + String.format("%.2f", total));
+                        tipCost.setText("$" + String.format("%.2f", (value * tip)));
+                    } else if (i == R.id.radioSplit) {
+                        people = Double.parseDouble(numPeople.getText().toString());
+                        total = (value + (value * tip)) / people;
+                        totalPrice.setText("$" + String.format("%.2f", total));
+                        tipCost.setText("$" + String.format("%.2f", (value * tip)));
+                    }
+                }catch(NumberFormatException error){}
             }
         });
 
@@ -117,41 +122,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    if (radioEntire.isChecked()) {
-                        people = 1.0;
-                    } else if (radioSplit.isChecked()) {
-                        people = Double.parseDouble(numPeople.getText().toString());
+                    if (radioSplit.isChecked()) {
+                        people = Integer.parseInt(numPeople.getText().toString());
+                        total = (value + (value * tip)) / people;
+                        totalPrice.setText("$" + String.format("%.2f", total));
+                        tipCost.setText("$"+String.format("%.2f", (value*tip)));
                     }
                 }
                 return false;
             }
         });
-    }
-    public void calculate(){
-        if (split==false){
-            radioEntire.setChecked(true);
-        } else{
-            radioSplit.setChecked(true);
-        }
-        value = Double.parseDouble(purchasePrice.getText().toString());
-        total = (value + (value * tip)) / people;
-        tipPer.setText(String.format("%.2f",(tip*100))+"%");
-        totalPrice.setText("$" + String.format("%.0f", total));
-        tipCost.setText("$"+String.format("%.2f", (value*tip)));
-    }
-    public void updateSettings(){
-        SharedPreferences sp = getSharedPreferences("shared", MODE_PRIVATE);
-        tip = sp.getInt("tip",15);
-        people = sp.getInt("people", 1);
-        split = sp.getBoolean("split", false);
-        seekBar.setProgress(tip);
-        calculate();
-
 
     }
     @Override
     public void onResume(){
         super.onResume();
         updateSettings();
+    }
+
+    public void updateSettings(){
+        SharedPreferences sp = getSharedPreferences("shared", MODE_PRIVATE);
+        tipI = sp.getInt("tip",15);
+        people = sp.getInt("people", 1);
+        split = sp.getBoolean("split", false);
+        seekBar.setProgress(tipI);
+        numPeople.setText(people+"");
+        if (split==false){
+            radioEntire.setChecked(true);
+        } else{
+            radioSplit.setChecked(true);
+        }
     }
 }
